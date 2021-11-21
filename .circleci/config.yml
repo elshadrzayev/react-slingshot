@@ -33,12 +33,10 @@ jobs:
       - run: npm audit
 
 workflows:
-  my_workflow:
+  firstworkflow:
     jobs:
       - build:
       - test:
-          requires:
-            - build
+          requires: [build]
       - analyze:
-          requires:
-            - test
+          requires: [test]
