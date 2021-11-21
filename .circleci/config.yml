@@ -1,41 +1,53 @@
-# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build:
+  print-hello:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
       - image: circleci/node:13.8.0
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run: npm i
-      - save_cache:
-          key: "el-npm-packages"
-          paths:
-            - /src
-      - run: npm run lint
+      - run:
+          name: "Say print hello"
+          command: "echo Hello!"
 
-  test:
+  print-world:
     docker:
       - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - restore_cache: keys:"el-npm-packages"
-      - run: npm i
-      - run: npm run test
-  analyze:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run: npm audit
 
+    steps:
+      - checkout
+      - run:
+          name: "Say Hello World"
+          command: "echo world"
+
+  print-myname:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: "What is your name"
+          command: |
+            echo ${my_name}
+          environment:
+            my_name: "Elshad"
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  my_workflow:
+  say-hello-workflow:
     jobs:
-      - build:
-      - test:
-          requires:
-            - build
-      - analyze:
-          requires:
-            - test
+      - print-hello
+      - print-world:
+          requires: [print-hello]
+      - print-myname:
+          requires: [print-hello, print-world]
+     
