@@ -27,7 +27,7 @@ jobs:
 workflows:
   firstworkflow:
     jobs:
-      - build:
+      - build
       - test:
           requires: [build]
       - analyze:
